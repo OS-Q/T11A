@@ -1,6 +1,3 @@
-﻿# [Web IDE](https://github.com/Qitas/WebIDE)
+# [A12](https://github.com/OS-Q/A12)
 
-用于安装配置Web IDE环境
-
-[![sites](qitas/qitas.png)](http://www.qitas.cn)
-## 锻造最美之器
+聚合发布文件
