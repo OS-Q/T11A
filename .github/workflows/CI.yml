@@ -56,10 +56,10 @@ jobs:
         example:
           - "simple"
           - "simple_sx1262"
-          # - "BME280_2.4v"
-          # - "balise_2.4v"
-          # - "balise"
-          # - "tempsensor"
+          - "BME280_2.4v"
+          - "balise_2.4v"
+          - "balise"
+          - "tempsensor"
 
         os: [ubuntu-latest, windows-latest, macos-latest]
 
@@ -86,9 +86,7 @@ jobs:
         if: success()
         working-directory: examples
         run: |
-
           pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
-          # cp -f ${{ matrix.example }}/.*io/build/**/*.bin  ${{ matrix.example }}/
           echo "::set-output name=status::success"
 
       - name: Upload
@@ -96,4 +94,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: qio_${{ matrix.example }}_${{ matrix.os }}
-          path: examples/${{ matrix.example }}/.pio
+          path: examples/${{ matrix.example }}/.pio/build
