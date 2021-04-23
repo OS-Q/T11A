@@ -80,6 +80,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -U https://github.com/OS-Q/M03/releases/latest/download/qio.zip
           pio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
+          pio ci --lib="." --project-option="lib_deps=ArduinoSTL"
 
       - name: Build examples
         id: build
@@ -110,5 +111,5 @@ jobs:
           pio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
       - name: Build simple exemple
         run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple
-      - name: Build simple sx1262 exemple
+      - name: Build simple sx1262
         run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple_sx1262
