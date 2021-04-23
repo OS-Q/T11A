@@ -84,10 +84,10 @@ jobs:
       - name: Build examples
         id: build
         if: success()
-        # working-directory: examples
+        working-directory: examples
         run: |
-          pio ci --lib="https://github.com/OS-Q/D175.git" --project-option="lib_deps=ArduinoSTL" --board=uno examples/${{ matrix.example }}
-          # pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
+          # pio ci --lib="https://github.com/OS-Q/D175.git" --project-option="lib_deps=ArduinoSTL" --board=uno examples/${{ matrix.example }}
+          pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
           # cp -f ${{ matrix.example }}/.*io/build/**/*.bin  ${{ matrix.example }}/
           echo "::set-output name=status::success"
 
@@ -125,10 +125,10 @@ jobs:
       - name: Build examples
         id: build
         if: success()
-        # working-directory: examples
+        working-directory: examples
         run: |
-          pio ci --lib="https://github.com/OS-Q/D175.git" --project-option="lib_deps=ArduinoSTL" --board=uno examples/${{ matrix.example }}
-          # pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
+          # pio ci --lib="https://github.com/OS-Q/D175.git" --project-option="lib_deps=ArduinoSTL" --board=uno examples/${{ matrix.example }}
+          pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
           # cp -f ${{ matrix.example }}/.*io/build/**/*.bin  ${{ matrix.example }}/
           echo "::set-output name=status::success"
 
