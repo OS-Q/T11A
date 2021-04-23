@@ -2,7 +2,7 @@
 .piolibdeps
 .vscode
 .pio
-**/README*
+# **/README*
 LICENSE*
 *.png
 *.jpg
