@@ -49,17 +49,17 @@ jobs:
         name: code_check_report
         path: codecheck.txt
 
-  examples:
+  QIO:
     strategy:
       fail-fast: false
       matrix:
         example:
-          - "tempsensor"
-          - "simple_sx1262"
           - "simple"
-          - "BME280_2.4v"
-          - "balise_2.4v"
-          - "balise"
+          - "simple_sx1262"
+          # - "BME280_2.4v"
+          # - "balise_2.4v"
+          # - "balise"
+          # - "tempsensor"
 
         os: [ubuntu-latest, windows-latest, macos-latest]
 
@@ -86,7 +86,7 @@ jobs:
         if: success()
         # working-directory: examples
         run: |
-          platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/${{ matrix.example }}
+          pio ci --lib="." --project-option="lib_deps=ArduinoSTL" examples/${{ matrix.example }}
           # pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
           # cp -f ${{ matrix.example }}/.*io/build/**/*.bin  ${{ matrix.example }}/
           echo "::set-output name=status::success"
@@ -98,43 +98,43 @@ jobs:
           name: qio_${{ matrix.example }}_${{ matrix.os }}
           path: examples/${{ matrix.example }}/.pio
 
-  TEST:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - name: Set up Python
-        uses: actions/setup-python@v1
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -U https://github.com/OS-Q/M03/releases/latest/download/qio.zip
-          pio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
-      - name: Build simple exemple
-        run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple
-      - name: Build simple sx1262
-        run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple_sx1262
-      - name: Build  exemple tempsensor
-        run: platformio ci --lib="." --board=pro8MHzatmega328 --project-option="lib_deps=ArduinoSTL DallasTemperature" examples/tempsensor
-      # - name: Build main
-      #   run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" .
-
   PIO:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - "simple"
+          - "simple_sx1262"
+          # - "BME280_2.4v"
+          # - "balise_2.4v"
+          # - "balise"
+          # - "tempsensor"
+
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
       - name: Set up Python
         uses: actions/setup-python@v1
-      - name: Install dependencies
+      - name: Install platformio
         run: |
           python -m pip install --upgrade pip
           pip install platformio
-      - name: Build simple exemple
-        run: platformio ci --lib="." --board=pro8MHzatmega328 --project-option="lib_deps=ArduinoSTL" examples/simple
-      - name: Build simple sx1262 exemple
-        run: platformio ci --lib="." --board=pro8MHzatmega328 --project-option="lib_deps=ArduinoSTL" examples/simple_sx1262
-      - name: Build  exemple BME280_2.4v
-        run: platformio ci --lib="." --board=pro8MHzatmega328 --project-option="lib_deps=ArduinoSTL" examples/BME280_2.4v
-      - name: Build  exemple tempsensor
-        run: platformio ci --lib="." --board=pro8MHzatmega328 --project-option="lib_deps=ArduinoSTL DallasTemperature" examples/tempsensor
-      - name: Build
-        run: platformio ci --lib="." --board=pro8MHzatmega328 --project-option="lib_deps=ArduinoSTL" .
+
+      - name: Build examples
+        id: build
+        if: success()
+        # working-directory: examples
+        run: |
+          pio ci --lib="." --project-option="lib_deps=ArduinoSTL" examples/${{ matrix.example }}
+          # pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
+          # cp -f ${{ matrix.example }}/.*io/build/**/*.bin  ${{ matrix.example }}/
+          echo "::set-output name=status::success"
+
+      - name: Upload
+        if: env.UPLOAD_BUILD
+        uses: actions/upload-artifact@v2
+        with:
+          name: pio_${{ matrix.example }}_${{ matrix.os }}
+          path: examples/${{ matrix.example }}/.pio
