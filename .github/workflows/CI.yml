@@ -49,7 +49,7 @@ jobs:
         name: code_check_report
         path: codecheck.txt
 
-  QIO:
+  examples:
     strategy:
       fail-fast: false
       matrix:
@@ -80,14 +80,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -U https://github.com/OS-Q/M03/releases/latest/download/qio.zip
           pio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
-          pio ci --lib="." --project-option="lib_deps=ArduinoSTL"
 
       - name: Build examples
         id: build
         if: success()
-        working-directory: examples
+        # working-directory: examples
         run: |
-          pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
+          platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/${{ matrix.example }}
+          # pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
           # cp -f ${{ matrix.example }}/.*io/build/**/*.bin  ${{ matrix.example }}/
           echo "::set-output name=status::success"
 
@@ -113,3 +113,5 @@ jobs:
         run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple
       - name: Build simple sx1262
         run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple_sx1262
+      - name: Build simple sx1262
+        run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" .
