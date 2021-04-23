@@ -113,5 +113,5 @@ jobs:
         run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple
       - name: Build simple sx1262
         run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple_sx1262
-      - name: Build simple sx1262
+      - name: Build main
         run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" .
