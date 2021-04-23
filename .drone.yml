@@ -11,7 +11,7 @@ steps:
   - pip install -U https://github.com/OS-Q/M03/releases/latest/download/qio.zip
   - qio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
   - qio run -d examples/simple
-  - qio run -d examples/simple_sx1262
+  - qio run -d .
 
 - name: PIO
   image: python:3
@@ -22,4 +22,4 @@ steps:
   - pip install -U https://github.com/platformio/platformio/archive/develop.zip
   - pio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
   - pio run -d examples/simple
-  - pio run -d examples/simple_sx1262
+  - pio run -d .

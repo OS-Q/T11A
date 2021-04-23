@@ -22,7 +22,7 @@ jobs:
           name: "Build"
           command: |
             qio run -d examples/simple
-            qio run -d examples/simple_sx1262
+            qio run -d .
 
   PIO:
     docker:
@@ -45,7 +45,7 @@ jobs:
           name: "Build"
           command: |
             pio run -d examples/simple
-            pio run -d examples/simple_sx1262
+            pio run -d .
 
 workflows:
     version: 2

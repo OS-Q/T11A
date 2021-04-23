@@ -55,11 +55,6 @@ jobs:
       matrix:
         example:
           - "simple"
-          - "simple_sx1262"
-          - "BME280_2.4v"
-          - "balise_2.4v"
-          - "balise"
-          - "tempsensor"
 
         os: [ubuntu-latest, windows-latest, macos-latest]
 

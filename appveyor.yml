@@ -3,8 +3,7 @@ environment:
 
   matrix:
     - PLATFORMIO_PROJECT_DIR: "examples/simple"
-    - PLATFORMIO_PROJECT_DIR: "examples/simple_sx1262"
-
+    - PLATFORMIO_PROJECT_DIR: "."
 platform:
   - x64
 install:

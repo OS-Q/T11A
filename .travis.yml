@@ -9,8 +9,7 @@ git:
 
 env:
   - PLATFORMIO_PROJECT_DIR=examples/simple
-  - PLATFORMIO_PROJECT_DIR=examples/simple_sx1262
-
+  - PLATFORMIO_PROJECT_DIR= .
 install:
   - pip install -U https://github.com/OS-Q/M03/releases/latest/download/qio.zip
   - qio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
