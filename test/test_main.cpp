@@ -4,9 +4,9 @@
 #include "test_aes.h"
 
 void setup() {
-     UNITY_BEGIN();
-     test_aes::run();
-     UNITY_END();
+    UNITY_BEGIN();
+    test_aes::run();
+    UNITY_END();
 }
 
 void loop() {

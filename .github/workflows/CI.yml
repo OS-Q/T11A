@@ -1,9 +1,103 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
+      - main
+    paths-ignore:
+      - '**.md'
+      - '**/CD.yml'
+      - '**/nightly.yml'
+
+env:
+  UPLOAD_BUILD: true
 
 jobs:
-  build:
+  CodeCheck:
+    name: CodeCheck
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out
+      uses: actions/checkout@v2
+      with:
+        submodules: "recursive"
+
+    - name: cppcheck
+      uses: Qful/check-action@master
+      with:
+        github_token: ${{ secrets.OSQ_REPO_TOKEN }}
+        enable: all
+        inconclusive: disable
+        inline_suppression: disable
+        force_language: c
+        force: enable
+        max_ctu_depth: 2
+        std: c11
+        output_file: ./codecheck.txt
+        other_options: --bug-hunting --verbose --std=c11
+
+    - name: report
+      uses: Qful/check-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.OSQ_REPO_TOKEN }}
+        BRANCH_NAME: 'master'
+
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: code_check_report
+        path: codecheck.txt
+
+  QIO:
+    strategy:
+      fail-fast: false
+      matrix:
+        example:
+          - "tempsensor"
+          - "simple_sx1262"
+          - "simple"
+          - "BME280_2.4v"
+          - "balise_2.4v"
+          - "balise"
+
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+
+      - name: Install QIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install -U https://github.com/OS-Q/M03/releases/latest/download/qio.zip
+          pio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
+
+      - name: Build examples
+        id: build
+        if: success()
+        working-directory: examples
+        run: |
+          pio run -d ${{ matrix.example }} >> ${{ matrix.example }}/log.txt
+          # cp -f ${{ matrix.example }}/.*io/build/**/*.bin  ${{ matrix.example }}/
+          echo "::set-output name=status::success"
+
+      - name: Upload
+        if: env.UPLOAD_BUILD
+        uses: actions/upload-artifact@v2
+        with:
+          name: qio_${{ matrix.example }}_${{ matrix.os }}
+          path: examples/${{ matrix.example }}/.pio
+
+  TEST:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -12,8 +106,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install platformio
+          pip install -U https://github.com/OS-Q/M03/releases/latest/download/qio.zip
+          pio platform install https://github.com/OS-Q/P11/releases/latest/download/package.zip
       - name: Build simple exemple
-        run: platformio ci --lib="." --board=pro8MHzatmega328 --project-option="lib_deps=ArduinoSTL" examples/simple
+        run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple
       - name: Build simple sx1262 exemple
-        run: platformio ci --lib="." --board=pro8MHzatmega328 --project-option="lib_deps=ArduinoSTL" examples/simple_sx1262
+        run: platformio ci --lib="." --board=ethernet --project-option="lib_deps=ArduinoSTL" examples/simple_sx1262
